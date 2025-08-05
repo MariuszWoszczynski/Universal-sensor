@@ -65,16 +65,33 @@ sensor:
     multiplexer: A2_GND
     gain: 4.096
     name: "CH1 [mA]"
+    id: current_sensor_1
     update_interval: 2s
     unit_of_measurement: "mA"
     accuracy_decimals: 2
     filters:
     - multiply: 6.710                  # mnożnik napięcia
 
+  - platform: template                  #dodatkowy sensor, np. ciśnienia, z kanału prądowego 1
+    name: "Ciśnienie [bar]"
+    unit_of_measurement: "bar"
+    accuracy_decimals: 2
+    update_interval: 2s
+    lambda: |-
+      return id(current_sensor_1).state;
+    filters:
+      - calibrate_linear:
+          - 4.0 -> 0.0            # 0bar dla 4mA
+          - 20.0 -> 5.0           # 5bar dla 20mA
+      - clamp:                    # ograniczenie wskazań
+          min_value: 0.0         
+          max_value: 5.0
+
   - platform: ads1115
     multiplexer: A3_GND
     gain: 4.096
     name: "CH2 [mA]"
+    id: current_sensor_2
     update_interval: 2s    
     unit_of_measurement: "mA"
     accuracy_decimals: 2
@@ -85,6 +102,7 @@ sensor:
     multiplexer: A1_GND
     gain: 4.096
     name: "CH3 [V]"
+    id: voltage_sensor_1
     update_interval: 2s
     unit_of_measurement: "V"
     accuracy_decimals: 2
@@ -95,6 +113,7 @@ sensor:
     multiplexer: A0_GND
     gain: 4.096
     name: "CH4 [V]"
+    id: voltage_sensor_2
     update_interval: 2s
     unit_of_measurement: "V"
     accuracy_decimals: 2
