@@ -1,0 +1,102 @@
+dashboard_import:
+  package_import_url: github://MariuszWoszczynski/Universal-sensor/universal-sensor.yaml@main
+  import_full_config: true
+ 
+substitutions:
+  name: universal-sensor
+  friendly_name: Universal sensor
+  
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  project:
+    name: esphome.universal_sensor
+    version: "1.0"
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Status LED for connection
+status_led:
+  pin:
+    # Blue LED
+    number: GPIO02
+    
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "H061VhnGAmZpfuPaqs45/VGbr/zMv6XvFScv1xAaLK8="
+
+web_server: 
+  port: 80
+  version: 3
+  
+ota:
+  - platform: esphome
+    password: "5153ce329cdf68964da17d6810fb88af"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Czujnik-Uniwersalny"
+    password: "Or4NMm2iq1RT"
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: false
+
+captive_portal:
+    
+
+ads1115:
+  - address: 0x48
+  
+sensor:
+  - platform: ads1115
+    multiplexer: A2_GND
+    gain: 4.096
+    name: "CH1 [mA]"
+    update_interval: 2s
+    unit_of_measurement: "mA"
+    accuracy_decimals: 2
+    filters:
+    - multiply: 6.710                  # mnożnik napięcia
+
+  - platform: ads1115
+    multiplexer: A3_GND
+    gain: 4.096
+    name: "CH2 [mA]"
+    update_interval: 2s    
+    unit_of_measurement: "mA"
+    accuracy_decimals: 2
+    filters:
+    - multiply: 6.714                    # mnożnik napięcia
+  
+  - platform: ads1115
+    multiplexer: A1_GND
+    gain: 4.096
+    name: "CH3 [V]"
+    update_interval: 2s
+    unit_of_measurement: "V"
+    accuracy_decimals: 2
+    filters:
+    - multiply: 3.131                    # mnożnik napięcia
+
+  - platform: ads1115
+    multiplexer: A0_GND
+    gain: 4.096
+    name: "CH4 [V]"
+    update_interval: 2s
+    unit_of_measurement: "V"
+    accuracy_decimals: 2
+    filters:
+    - multiply: 3.144                    # mnożnik napięcia
